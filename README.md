@@ -1,14 +1,14 @@
-#HydroQC
+# HydroQC
 Hydro Quebec API wrapper.
 
 This is a package to access some functionalities of Hydro Quebec API that are not documented.
 
-##Credit
+## Credit
 
 Thibault Cohen who wrote [pyhydroquebec](https://github.com/titilambert/pyhydroquebec/) 
 That's where I took most of the inspiration (and some portions of the code)
 
-##Goal
+## Goal
 
 Make it easy to fetch and manipulate data from hydro quebec, especially the winter credit periods
 
