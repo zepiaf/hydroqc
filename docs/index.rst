@@ -7,14 +7,10 @@ Welcome to Hydro Quebec API Wrapper's documentation!
 ====================================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-.. automodule:: hydro_api.auth
-    :members:
-
-.. automodule:: hydro_api.services
-    :members:
+   :maxdepth: 4
+   :caption: Hydro API:
+   auth
+   services
 
 Indices and tables
 ==================
