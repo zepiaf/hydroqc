@@ -25,8 +25,8 @@ This uses python 3 (tested with 3.8)
     (hydro-env) $ pip install -r requirements.txt
 
 
-3. Copy config/config.default.ini and add your hydro account credentials
-4. Run ./hydro.qc
+3. Copy config/config.default.ini to config/config.ini and add your hydro account credentials
+4. Run ./hydro.py
 
 ## Available features :
 
@@ -36,16 +36,7 @@ This uses python 3 (tested with 3.8)
 - Services.getDailyConsumption(start_date = 'YYYY-MM-DD',end_date = 'YYYY-MM-DD') to get a range of daily consumption
 - Services.getWinterCreditEvents() to get a JSON object with past / future and next peak events
 
-## Basic MQTT publisher
-
-Configure the MQTT in the config file and run mqtt.py
-
-Will publish next winter peak event to winterpeaks/next/start and winterpeaks/next/finish 
-
-Format is YYYY-MM-DD HH:MM:SS
-
-Feel free to tinker with it to suit your needs !
-
 ## TODO 
 
+- Parse output and send to homeassistant (mqtt ??)
 - What else ?
