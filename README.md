@@ -25,8 +25,8 @@ This uses python 3 (tested with 3.8)
     (hydro-env) $ pip install -r requirements.txt
 
 
-3. Copy config/config.default.ini and add your hydro account credentials
-4. Run ./hydro.qc
+3. Copy config/config.default.ini to config/config.ini and add your hydro account credentials
+4. Run ./hydro.py
 
 ## Available features :
 
