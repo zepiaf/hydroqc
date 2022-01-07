@@ -1,0 +1,1 @@
+"""Hydro Quebec API Wrapper"""
