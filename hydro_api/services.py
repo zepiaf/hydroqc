@@ -1,3 +1,8 @@
+"""
+Wrappers to API calls and associated post processing
+"""
+
+
 import logging
 import json
 
@@ -9,6 +14,9 @@ from .auth import Hydro
 log = logging.getLogger(__name__)
 
 class Services:
+    """
+    Hydro Quebec API services
+    """
     def __init__(self):
         self.auth = Hydro()
         self.auth.login()
@@ -79,24 +87,31 @@ class Services:
 
         :param: reference_date: YYYY-MM-DD HH:MM:SS date/time string used for testing (should not be used in prod)
 
-        :return:    JSON Object with current_winter, past_winters and next event.
-                    Current winter have past and future events
-                    Events have timestamp as key (easier to sort) and have date, start hour, end hour
-                    events :
-                        {
+        :return:
+
+        JSON Object with current_winter, past_winters and next event.
+        Current winter have past and future events
+        Events have timestamp as key (easier to sort) and have date, start hour, end hour
+
+        :example:
+
+            ::
+
+                events = {
                             'current_winter': {
-                                'past': {},
-                                'future': {}
+                                'past': { [event, ...] },
+                                'future': { [event, ...] }
                             },
-                            'past_winters': {},
-                            'next': {}
+                            'past_winters': { [event, ...] },
+                            'next': { [event, ...] }
                         }
-                    event :
-                        'timestamp': {
-                            date: 'YYYY-MM-DD',
-                            start : 'HH:MM:SS',
-                            end: 'HH:MM:SS'
+                event = {
+                            'timestamp': {
+                                date: 'YYYY-MM-DD',
+                                start : 'HH:MM:SS',
+                                end: 'HH:MM:SS'
                         }
+
         """
         if not reference_datetime:
             ref_date = datetime.datetime.now()
