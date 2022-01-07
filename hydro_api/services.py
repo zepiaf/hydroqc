@@ -116,6 +116,7 @@ class Services:
 
         - The next event will be returned only when the current event is completed to avoid interfering with automations
         - The timestamp is the timestamp of the end of the event
+        - Future events have a 'pre_start' datetime as a helper for homeassistant pre-event automations (offset -3h)
         """
         if not reference_datetime:
             ref_date = datetime.datetime.now()
@@ -174,7 +175,9 @@ class Services:
                         " " +
                         events['current_winter']['future'][timestamp]['end']
                         , '%Y-%m-%d %H:%M:%S')
-                    log.debug("start %s, end %s, ourdate %s" % (event_start_datetime, event_end_datetime, ref_date))
+                    offset = datetime.timedelta(hours=3)
+                    event_pre_start = event_start_datetime - offset
+                    events['current_winter']['future'][timestamp]['pre_start'] = event_pre_start.strftime("%Y-%m-%d %H:%M:%S")
                     if event_start_datetime.timestamp() <= ref_date.timestamp() <= event_end_datetime.timestamp():
                         event_in_progress = True
                         next_event = timestamp
