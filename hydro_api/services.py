@@ -112,6 +112,11 @@ class Services:
                                 end: 'HH:MM:SS'
                         }
 
+        :notes:
+
+        - The next event will be returned only when the current event is completed to avoid interfering with automations
+        - The timestamp is the timestamp of the end of the event
+        - Future events have a 'pre_start' datetime as a helper for homeassistant pre-event automations (offset -3h)
         """
         if not reference_datetime:
             ref_date = datetime.datetime.now()
@@ -142,10 +147,10 @@ class Services:
                         e['date'] = date.strftime('%Y-%m-%d')
                         e['start'] = event['heureDebut']
                         e['end'] = event['heureFin']
-                        start_date_time = datetime.datetime.strptime(e['date'] + " " + e['start'], '%Y-%m-%d %H:%M:%S')
-                        timestamp = start_date_time.timestamp()
+                        end_date_time = datetime.datetime.strptime(e['date'] + " " + e['end'], '%Y-%m-%d %H:%M:%S')
+                        timestamp = end_date_time.timestamp()
                         future = False
-                        if start_date_time > ref_date:
+                        if end_date_time >= ref_date:
                             future = True
                         if current:
                             if future:
@@ -155,9 +160,32 @@ class Services:
                         else:
                             events['past_winter'][timestamp] = e
 
+            event_in_progress = False
+            next_event = None
             if events['current_winter']['future']:
-                next_event = min(events['current_winter']['future'], key=float)
-                if next_event:
-                    events['next'] = {next_event: events['current_winter']['future'][next_event]}
+                for timestamp in events['current_winter']['future']:
+                    event_start_datetime = datetime.datetime.strptime(
+                        events['current_winter']['future'][timestamp]['date'] +
+                        " " +
+                        events['current_winter']['future'][timestamp]['start']
+                        , '%Y-%m-%d %H:%M:%S')
+                    next_event = min(events['current_winter']['future'], key=float)
+                    event_end_datetime = datetime.datetime.strptime(
+                        events['current_winter']['future'][timestamp]['date'] +
+                        " " +
+                        events['current_winter']['future'][timestamp]['end']
+                        , '%Y-%m-%d %H:%M:%S')
+                    offset = datetime.timedelta(hours=3)
+                    event_pre_start = event_start_datetime - offset
+                    events['current_winter']['future'][timestamp]['pre_start'] = event_pre_start.strftime("%Y-%m-%d %H:%M:%S")
+                    if event_start_datetime.timestamp() <= ref_date.timestamp() <= event_end_datetime.timestamp():
+                        event_in_progress = True
+                        next_event = timestamp
+                        break
+
+                if not event_in_progress:
+                    next_event = min(events['current_winter']['future'], key=float)
+            if next_event:
+                events['next'] = {next_event: events['current_winter']['future'][next_event]}
 
         return events

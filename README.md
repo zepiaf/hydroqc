@@ -3,6 +3,10 @@ Hydro Quebec API wrapper.
 
 This is a package to access some functionalities of Hydro Quebec API that are not documented.
 
+## Documentation
+
+[https://hydroqc.readthedocs.io/](https://hydroqc.readthedocs.io/)
+
 ## Credit
 
 Thibault Cohen who wrote [pyhydroquebec](https://github.com/titilambert/pyhydroquebec/) 
