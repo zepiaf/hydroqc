@@ -50,6 +50,11 @@ Format is YYYY-MM-DD HH:MM:SS
 
 Feel free to tinker with it to suit your needs !
 
+## NOTES
+
+As per issue https://github.com/zepiaf/hydroqc/issues/11 the certificate chain for service.hydroquebec.com is not 
+downloaded correctly. It has been forced in the code. It will not be used if verification is disabled.
+
 ## TODO 
 
 - What else ?
