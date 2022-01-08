@@ -58,7 +58,11 @@ class Hydro:
 
     def set_oauth_settings(self):
         """Read OAUTH2 settings from hydro json"""
-        data = self.session.get(self.SECURITY_URL, verify=self.config.getboolean('Global', 'validate_ssl'))
+        if self.config.getboolean('Global', 'validate_ssl'):
+            # Certificate chain is added manually as there is an issue with this domain
+            data = self.session.get(self.SECURITY_URL, verify='config/hydro-chain.pem')
+        else:
+            data = self.session.get(self.SECURITY_URL, verify=False)
         try:
             return data.json()['oauth2'][0]
         except:
