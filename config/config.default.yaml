@@ -19,3 +19,4 @@ mqtt:
   port: 1883
   user: ''
   password: ''
+  base_topic: 'hydroqc'

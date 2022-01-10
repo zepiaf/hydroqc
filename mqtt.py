@@ -15,9 +15,13 @@ broker = config.mqtt.server
 port = config.mqtt.port
 user = config.mqtt.user
 password = config.mqtt.password
+base_topic = config.mqtt.base_topic
+
+w = WinterCredit()
+contract_id = w.api.auth.contract_id
 
 def on_publish(client,userdata,result):             #create function for callback
-    print("data published [%s]" % result)
+    print("data published [#%s]" % result)
     pass
 
 mqtt_client= paho.Client("HydroQC")
@@ -26,20 +30,19 @@ if user and password:
     mqtt_client.username_pw_set(username=user, password=password)
 mqtt_client.connect(broker,port)
 mqtt_client.loop_start()
-w = WinterCredit()
 next_event = w.getNextEvent()
 
 if next_event:
     for key in next_event.keys():
-        ret= mqtt_client.publish("winterpeaks/next/"+key, next_event[key], qos=1, retain=True)
+        ret= mqtt_client.publish("%s/%s/winterpeaks/next/%s" % (base_topic, contract_id,key), next_event[key], qos=1, retain=True)
 
 state = w.getCurrentState()
 if state:
     for key in state['state'].keys():
-        ret = mqtt_client.publish("winterpeaks/state/" + key, state['state'][key], qos=1, retain=True)
+        ret = mqtt_client.publish("%s/%s/winterpeaks/state/%s" % (base_topic, contract_id,key), state['state'][key], qos=1, retain=True)
     for topic in state['reference_period'].keys():
         for key in state['reference_period'][topic].keys():
-            ret = mqtt_client.publish("winterpeaks/reference_period/%s/%s" % (topic, key), state['reference_period'][topic][key], qos=1, retain=True)
+            ret = mqtt_client.publish("%s/%s/winterpeaks/reference_period/%s/%s" % (base_topic,contract_id, topic, key), state['reference_period'][topic][key], qos=1, retain=True)
 
 mqtt_client.loop_stop()
 mqtt_client.disconnect()
