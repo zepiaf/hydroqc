@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /hydro-env/
-/config/config.ini
+/config/config.yaml
 .idea/

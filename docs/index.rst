@@ -8,6 +8,8 @@ Welcome to Hydro Quebec API Wrapper's documentation!
    :caption: Hydro API:
 
    hydro_api
+   config
+   winter_credit
 
 Indices and tables
 ==================

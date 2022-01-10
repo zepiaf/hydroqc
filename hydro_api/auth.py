@@ -1,7 +1,6 @@
 """
 Authentication and initialization of Hydro API
 """
-import configparser
 import json
 import random
 import string
@@ -9,9 +8,11 @@ import uuid
 import requests
 import logging
 
-log = logging.getLogger(__name__)
-
+from config.config import Config
 from datetime import datetime
+
+
+log = logging.getLogger(__name__)
 
 class Hydro:
     """
@@ -39,9 +40,8 @@ class Hydro:
     def __init__(self, **kwargs):
         """Initialize parameters from the config file and hydro OAUTH2 settings URL"""
         self.session = requests.Session()
-        self.config = configparser.ConfigParser()
-        self.config.read('config/config.ini')
-        if not self.config.getboolean('Global', 'validate_ssl'):
+        self.config = Config()
+        if not self.config.ssl.validate_ssl:
             from urllib3.exceptions import InsecureRequestWarning
             requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
         self.login_data = {}
@@ -58,7 +58,7 @@ class Hydro:
 
     def set_oauth_settings(self):
         """Read OAUTH2 settings from hydro json"""
-        if self.config.getboolean('Global', 'validate_ssl'):
+        if self.config.ssl.validate_ssl:
             # Certificate chain is added manually as there is an issue with this domain
             data = self.session.get(self.SECURITY_URL, verify='config/hydro-chain.pem')
         else:
@@ -112,7 +112,7 @@ class Hydro:
 
         try:
             resource = self.session.post(self.AUTH_URL, headers=headers,
-                                         verify=self.config.getboolean('Global', 'validate_ssl'))
+                                         verify=self.config.ssl.validate_ssl)
         except Exception as e:
             log.error('shit happend')
         try:
@@ -123,14 +123,14 @@ class Hydro:
         if 'tokenId' not in self.login_data and 'callbacks' in self.login_data:
             log.debug("no token id but data has callback")
             # Fill the callback template
-            self.login_data['callbacks'][0]['input'][0]['value'] = self.config.get('Credentials','user')
-            self.login_data['callbacks'][1]['input'][0]['value'] = self.config.get('Credentials','password')
+            self.login_data['callbacks'][0]['input'][0]['value'] = self.config.credentials.user
+            self.login_data['callbacks'][1]['input'][0]['value'] = self.config.credentials.password
 
             json_data = json.dumps(self.login_data)
             try:
                 log.debug("trying to get a token")
                 res = self.session.post(self.AUTH_URL, data=json_data, headers=headers,
-                                        verify=self.config.getboolean('Global', 'validate_ssl'))
+                                        verify=self.config.ssl.validate_ssl)
             except:
                 log.error('Unable to connect.')
                 return False
@@ -168,9 +168,9 @@ class Hydro:
             "locale": "en"
         }
         resource = self.session.get(self.AUTHORIZE_URL, params=params, allow_redirects=False,
-                                    verify=self.config.getboolean('Global', 'validate_ssl'))
+                                    verify=self.config.ssl.validate_ssl)
         callback_url = resource.headers['Location']
-        self.session.get(callback_url, verify=self.config.getboolean('Global', 'validate_ssl'))
+        self.session.get(callback_url, verify=self.config.ssl.validate_ssl)
         raw_callback_params = callback_url.split('/callback#', 1)[-1].split("&")
         callback_params = dict([p.split("=", 1) for p in raw_callback_params])
         if 'access_token' in callback_params:
@@ -198,7 +198,7 @@ class Hydro:
         }
 
         resource = self.session.get(self.RELATION_URL, headers=headers,
-                                    verify=self.config.getboolean('Global', 'validate_ssl'))
+                                    verify=self.config.ssl.validate_ssl)
         data = resource.json()
         try:
             self.account_id = data[0]['noPartenaireDemandeur']
@@ -209,12 +209,12 @@ class Hydro:
         headers = self.get_api_headers()
 
         self.session.get(self.INFOBASE_URL, headers=headers,
-                         verify=self.config.getboolean('Global', 'validate_ssl'))
+                         verify=self.config.ssl.validate_ssl)
         self.session.get(self.SESSION_URL, params=params, headers=headers,
-                         verify=self.config.getboolean('Global', 'validate_ssl'))
+                         verify=self.config.ssl.validate_ssl)
 
         resource = self.session.get(self.CONTRACT_URL, headers=headers,
-                                    verify=self.config.getboolean('Global', 'validate_ssl'))
+                                    verify=self.config.ssl.validate_ssl)
         data = resource.json()
         if 'comptesContrats' in data:
             try:
@@ -223,7 +223,7 @@ class Hydro:
                 log.error('contract not found')
                 return False
 
-        self.session.get(self.PORTRAIT_URL, headers=headers, verify=self.config.getboolean('Global', 'validate_ssl'))
+        self.session.get(self.PORTRAIT_URL, headers=headers, verify=self.config.ssl.validate_ssl)
 
         return True
 

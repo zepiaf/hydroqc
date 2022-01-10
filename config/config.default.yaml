@@ -1,0 +1,21 @@
+ssl:
+  validate_ssl: true
+
+credentials:
+  user: ''
+  password: ''
+
+formats:
+  datetime_format: '%Y-%m-%d %H:%M:%S'
+
+events:
+  pre_heat_start_offset: 3
+  pre_heat_end_offset: 0
+  ref_start_offset: 5
+  ref_end_offset: 2
+
+mqtt:
+  server: ''
+  port: 1883
+  user: ''
+  password: ''

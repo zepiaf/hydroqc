@@ -1,0 +1,1 @@
+"""Winter credit helper"""
