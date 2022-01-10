@@ -27,6 +27,6 @@ events = s.getWinterCreditEvents()
 
 if 'next' in events:
     for e in events['next']:
-        ret= mqtt_client.publish("winterpeaks/next/start", "%s %s" % (events['next'][e]['date'], events['next'][e]['start']))
-        ret= mqtt_client.publish("winterpeaks/next/finish", "%s %s" % (events['next'][e]['date'], events['next'][e]['end']))
-        ret= mqtt_client.publish("winterpeaks/next/pre_start", events['next'][e]['pre_start'])
+        ret= mqtt_client.publish("winterpeaks/next/start", "%s %s" % (events['next'][e]['date'], events['next'][e]['start']), qos=1, retain=True)
+        ret= mqtt_client.publish("winterpeaks/next/finish", "%s %s" % (events['next'][e]['date'], events['next'][e]['end']), qos=1, retain=True)
+        ret= mqtt_client.publish("winterpeaks/next/pre_start", events['next'][e]['pre_start'], qos=1, retain=True)
