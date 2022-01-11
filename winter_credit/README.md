@@ -12,6 +12,8 @@ TODO: Describe the meaning of the values returned by the module.
 The following are the terms in use in this module and coming as much as possible from the official Hydro-Quebec electricy rates document (page 31)
 https://www.hydroquebec.com/data/documents-donnees/pdf/electricity-rates.pdf
 
+and from the "Regie de l'énergie" document http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-RepDDR-2018_10_26.pdf#page=124
+
 ## Period
 
 A period is time window where a specific billing or algorythmic logic is applied by HQ
