@@ -49,6 +49,20 @@ class WinterCredit:
 
         return future_events
 
+    def getAllEvents(self):
+        """Return future and past events (Current winter only) object
+
+        :return: events list
+
+        :rtype: list
+        """
+        self.refreshData()
+        events = []
+        for future_ts in self.events['current_winter']['future']:
+            events.append(self.events['current_winter']['future'][future_ts])
+        for past_ts in self.events['current_winter']['past']:
+            events.append(self.events['current_winter']['past'][past_ts])
+        return events
     def getNextEvent(self):
         """Return next event object
 
@@ -96,15 +110,15 @@ class WinterCredit:
         if 'pre_heat_start_ts' in next_event:
             if next_event['pre_heat_start_ts'] <= thisday.timestamp() <= next_event['pre_heat_end_ts']:
                 pre_heat = True
-        for future_event in self.getFutureEvents():
-            if 'date' in future_event:
-                if future_event['date'] == today:
-                   if future_event['start_ts'] < today_noon_ts:
+        for event in self.getAllEvents():
+            if 'date' in event:
+                if event['date'] == today:
+                   if event['start_ts'] < today_noon_ts:
                        morning_event_today = True
                    else:
                        evening_event_today = True
-                elif future_event['date'] == tomorrow:
-                    if future_event['start_ts'] < tomorrow_noon_ts:
+                elif event['date'] == tomorrow:
+                    if event['start_ts'] < tomorrow_noon_ts:
                         morning_event_tomorrow = True
                     else:
                         evening_event_tomorrow = True
