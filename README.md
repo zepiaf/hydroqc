@@ -29,7 +29,7 @@ This uses python 3 (tested with 3.8)
     (hydro-env) $ pip install -r requirements.txt
 
 
-3. Copy config/config.default.ini to config/config.ini and add your hydro account credentials
+3. Copy config/config.default.yaml to config/config.yaml and add your hydro account credentials
 4. Run ./hydro.py
 
 ## Available features :
@@ -38,15 +38,100 @@ This uses python 3 (tested with 3.8)
 - Services.getTodayHourlyConsumption() to get raw hourly consumption for current day
 - Services.getHourlyConsumption(date = 'YYYY-MM-DD') to get hourly consumption for specific day
 - Services.getDailyConsumption(start_date = 'YYYY-MM-DD',end_date = 'YYYY-MM-DD') to get a range of daily consumption
-- Services.getWinterCreditEvents() to get a JSON object with past / future and next peak events
+- WinterCredit.getFutureEvents() to get a list of JSON object with future peak events
+```
+[
+ {
+  "date": "2022-01-11",
+  "start": "2022-01-11 16:00:00",
+  "end": "2022-01-11 20:00:00",
+  "start_ts": 1641934800.0,
+  "end_ts": 1641949200.0,
+  "pre_heat_start": "2022-01-11 13:00:00",
+  "pre_heat_end": "2022-01-11 16:00:00",
+  "pre_heat_start_ts": 1641924000.0,
+  "pre_heat_end_ts": 1641934800.0
+ },
+ {
+  "date": "2022-01-11",
+  "start": "2022-01-11 06:00:00",
+  "end": "2022-01-11 09:00:00",
+  "start_ts": 1641898800.0,
+  "end_ts": 1641909600.0,
+  "pre_heat_start": "2022-01-11 03:00:00",
+  "pre_heat_end": "2022-01-11 06:00:00",
+  "pre_heat_start_ts": 1641888000.0,
+  "pre_heat_end_ts": 1641898800.0
+ },
+ {
+  "date": "2022-01-10",
+  "start": "2022-01-10 16:00:00",
+  "end": "2022-01-10 20:00:00",
+  "start_ts": 1641848400.0,
+  "end_ts": 1641862800.0,
+  "pre_heat_start": "2022-01-10 13:00:00",
+  "pre_heat_end": "2022-01-10 16:00:00",
+  "pre_heat_start_ts": 1641837600.0,
+  "pre_heat_end_ts": 1641848400.0
+ }
+]
 
+```
+- WinterCredit.getNextEvent() to get the next event :
+```
+{
+ "date": "2022-01-10",
+ "start": "2022-01-10 16:00:00",
+ "end": "2022-01-10 20:00:00",
+ "start_ts": 1641848400.0,
+ "end_ts": 1641862800.0,
+ "pre_heat_start": "2022-01-10 13:00:00",
+ "pre_heat_end": "2022-01-10 16:00:00",
+ "pre_heat_start_ts": 1641837600.0,
+ "pre_heat_end_ts": 1641848400.0
+}
+```
+- WinterCredit.getState() to get current information like :
+```
+{
+ "state": {
+  "current_state": "normal",
+  "event_in_progress": false,
+  "pre_heat": true,
+  "morning_event_today": false,
+  "evening_event_today": true,
+  "morning_event_tomorrow": true,
+  "evening_event_tomorrow": true
+ },
+ "reference_period": {
+  "morning": {
+   "date": "2022-01-10",
+   "start": "2022-01-10 01:00:00",
+   "end": "2022-01-10 04:00:00",
+   "start_ts": 1641794400.0,
+   "end_ts": 1641805200.0
+  },
+  "evening": {
+   "date": "2022-01-10",
+   "start": "2022-01-10 11:00:00",
+   "end": "2022-01-10 14:00:00",
+   "start_ts": 1641830400.0,
+   "end_ts": 1641841200.0
+  }
+ }
+}
+
+```
 ## Basic MQTT publisher
 
 Configure the MQTT in the config file and run mqtt.py
 
-Will publish next winter peak event to winterpeaks/next/start and winterpeaks/next/finish 
+Will publish next winter peak event and current status to the winterpeaks topic
+winterpeaks/next -> next event
+winterpeaks/state -> current state
+winterpeaks/reference_periods -> reference periods for the current day
 
-Format is YYYY-MM-DD HH:MM:SS
+datetime format is YYYY-MM-DD HH:MM:SS (can be configured) and {field}_ts is unix epoch
 
 Feel free to tinker with it to suit your needs !
 
