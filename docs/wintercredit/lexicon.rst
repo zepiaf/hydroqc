@@ -75,7 +75,7 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
 
             Ex: raise the thermostat setpoint.
 
-**event**
+**Event**
     An event is also referred to a “critical peak event” means that HQ sent a
     notification that the peak period will be considered critical and
     admissible to winter credits.
