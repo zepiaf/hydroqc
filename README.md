@@ -5,7 +5,12 @@ This is a package to access some functionalities of Hydro Quebec API that are no
 
 ## Documentation
 
+### Code documentation
 [https://hydroqc.readthedocs.io/](https://hydroqc.readthedocs.io/)
+
+### Architecture / concepts
+If you need more information about the winter credit, the associated terms, documents, ... :
+   [Winter Credit lexicon and concepts](https://hydroqc.readthedocs.io/en/latest/wintercredit/wintercredit.html)
 
 ## Credit
 
