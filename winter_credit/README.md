@@ -29,9 +29,7 @@ This is when the critical peak events from hydro are happening.
 
 In hydro's document there are also exclusions for specific holiday dates (Christmans, New year, Good Friday and Easter Monday) that we don't take into account here (yet)
 
-### temperature adjustement
-
-> I am unsure on how to name this. I thought reference made sense but in HQ's doc it means something completely different (see below)
+### anchor (temperature adjustement)
 
 This period starts 5 hours before the next peak event's start time and has a duration of 3 hours. With the current peak period (as described above) it results in the following time periods: 
 
@@ -42,6 +40,8 @@ This period starts 5 hours before the next peak event's start time and has a dur
 11h00-14h00
 
 This period is used by HQ in combination with the reference period to calculate the Reference Energy used to calculate the credit by trying to guess the additionnal energy usage caused by the colder temperature.
+
+In HQ's rate document it is called temperature adjustment and in the "Regie de l'énergie" docuement it is refered to as an "anchor" period.
 
 ### reference period
 
@@ -65,7 +65,7 @@ When a period is critical it can means two things depending on the period type:
 #### peak period
 The current peak period is part of a "critical peak event"
 
-#### normal period or temperature adjustment period
+#### normal period or anchor period
 Means that the next immediate peak period will be a "critical peak event"
 
 ### none (or normal/regular?)
