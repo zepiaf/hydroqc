@@ -17,7 +17,7 @@ periods:
 
   # Offset in hours to apply to the peak period start time to find the start of the anchor period
   # Per HQ documentation (as of winter 2021-2022) it is 5 hours before the next peak
-  anchor_start_offset: -5
+  anchor_start_offset: 5
   
   # Duration of the anchor period
   # Per HQ documentation (as of winter 2021-2022) it is a duration of 3 hours
@@ -32,4 +32,4 @@ mqtt:
   user: ''
   password: ''
   # mqtt topic will be {base_topic}/{contract_id}/(next|state|reference_period)/#
-  base_topic: 'HQ-test'
+  base_topic: 'hydroqc'
