@@ -25,7 +25,12 @@ periods:
   
   # Data will be refreshed after 5mn (avoid killing hydro api)
   event_refresh_seconds: 300
-
+  
+  # Pre-heat offset
+  # Will not be calculated if pre_heat_start_offset = 0
+  pre_heat_start_offset: 3
+  pre_heat_end_offset: 0
+  
 mqtt:
   server: ''
   port: 1883
