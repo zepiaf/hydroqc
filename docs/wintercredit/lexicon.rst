@@ -46,7 +46,7 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
             refered to as an “anchor” period.
 
 
-        * pre-heat | pre-critical-preak
+        * pre-heat
             A period of time when we want to run some automations before a critical peak event’s start.
 
             Ex: raise the thermostat setpoint.
