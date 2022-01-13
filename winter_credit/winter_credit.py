@@ -222,8 +222,9 @@ class WinterCredit:
                     'end': today_peak_evening_end.strftime(self.config.formats.datetime_format),
                     'start_ts': today_peak_evening_start.timestamp(),
                     'end_ts': today_peak_evening_end.timestamp(),
-                }
-            }
+                },
+            },
+            'last_update': thisday.strftime(self.config.formats.datetime_format)
         }
         return response
 
