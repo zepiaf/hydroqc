@@ -135,7 +135,7 @@ class WinterCredit:
         morning_event_tomorrow = False
         evening_event_tomorrow = False
         upcoming_event = False
-        next_peak_critical = True
+        next_peak_critical = False
         next_event = self.getNextEvent()
         if 'pre_heat_start_ts' in next_event:
             if next_event['pre_heat_start_ts'] <= thisday.timestamp() <= next_event['pre_heat_end_ts']:
@@ -147,15 +147,13 @@ class WinterCredit:
                        morning_event_today = True
                    else:
                        evening_event_today = True
+                   if event['end_ts'] == next_peak_period_end.timestamp():
+                        next_peak_critical = True
                 elif event['date'] == tomorrow:
                     if event['start_ts'] < tomorrow_noon_ts:
                         morning_event_tomorrow = True
                     else:
-                        evening_event_tomorrow = True
-                if event['date'] == today:
-                    if event['end_ts'] > thisday.timestamp():
-                        next_peak_critical = True
-                        
+                        evening_event_tomorrow = True                       
                 if event['start_ts'] > thisday.timestamp():
                         upcoming_event = True
 
