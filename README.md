@@ -100,13 +100,16 @@ This uses python 3 (tested with 3.8)
 ```
 {
  "state": {
-  "current_state": "normal",
-  "event_in_progress": false,
-  "pre_heat": true,
-  "morning_event_today": false,
-  "evening_event_today": true,
-  "morning_event_tomorrow": true,
-  "evening_event_tomorrow": true
+  "current_period": "normal", # peak | normal | anchor : what kind of period is happening now (at the moment this script run)
+  "current_period_time_of_day": # peak_morning | peak_evening | anchor_morning | anchor_evening | normal : like the above but combined with the time of day
+  "peak_critical": true # true | false : is the next peak period a critical peak
+  "upcoming_event": true # true | false : is there an critical peak event announced by HQ, not matter when it is happening.
+  "event_in_progress": false, # true | false : if there is currently a critical peak event in progress
+  "pre_heat": true, # true | false : if we are currently in a pre-heat period as defined in the config
+  "morning_event_today": false, # true | false : Is there a critical peak event in the morning today
+  "evening_event_today": true, # true | false : Is there a critical peak event in the evening today
+  "morning_event_tomorrow": true, # true | false : Is there a critical peak event in the morning tomorrow
+  "evening_event_tomorrow": true # true | false : Is there a critical peak event in the evening tomorrow
  },
  "reference_period": {
   "morning": {
@@ -146,5 +149,5 @@ As per issue https://github.com/zepiaf/hydroqc/issues/11 the certificate chain f
 downloaded correctly. It has been forced in the code. It will not be used if verification is disabled.
 
 ## TODO 
-
+- Describe the different values returned
 - What else ?

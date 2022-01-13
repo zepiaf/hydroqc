@@ -56,21 +56,7 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
             In HQ’s rate document it is called temperature adjustment and in the “Regie de l’énergie” document it is
             refered to as an “anchor” period.
 
-        * reference period
-            This value is not used or provided in winter_module.py but is good
-            to know about to give some context to the calculations.
-
-            The period corresponding to the last 5 non-critical event, differentiated by weekend vs week days.
-
-            **Examples:**
-
-            Saturday evening critical peak event’s reference period = Last 5
-            non-critical evening peaks that occurred on weekend days
-
-            Wednesday morning critical peak event’s reference period = Last 5
-            non-critical morning peaks that occurred on week days
-
-        * pre-heat | pre-critical-preak
+        * pre-heat
             A period of time when we want to run some automations before a critical peak event’s start.
 
             Ex: raise the thermostat setpoint.
@@ -80,5 +66,18 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
     notification that the peak period will be considered critical and
     admissible to winter credits.
 
+**reference period**
+    This value is not used or provided in winter_module.py but is good
+    to know about to give some context to the calculations.
+
+    The period corresponding to the last 5 non-critical event, differentiated by weekend vs week days.
+
+    **Examples:**
+
+    Saturday evening critical peak event’s reference period = Last 5
+    non-critical evening peaks that occurred on weekend days
+
+    Wednesday morning critical peak event’s reference period = Last 5
+    non-critical morning peaks that occurred on week days
 
 
