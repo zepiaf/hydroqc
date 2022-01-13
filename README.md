@@ -5,7 +5,12 @@ This is a package to access some functionalities of Hydro Quebec API that are no
 
 ## Documentation
 
+### Code documentation
 [https://hydroqc.readthedocs.io/](https://hydroqc.readthedocs.io/)
+
+### Architecture / concepts
+If you need more information about the winter credit, the associated terms, documents, ... :
+   [Winter Credit lexicon and concepts](https://hydroqc.readthedocs.io/en/latest/wintercredit/wintercredit.html)
 
 ## Credit
 
@@ -142,52 +147,6 @@ Feel free to tinker with it to suit your needs !
 
 As per issue https://github.com/zepiaf/hydroqc/issues/11 the certificate chain for service.hydroquebec.com is not 
 downloaded correctly. It has been forced in the code. It will not be used if verification is disabled.
-
-# Lexicon
-
-
-The following are the terms in use in this module and coming as much as possible from the official Hydro-Quebec electricy rates document (page 31)
-https://www.hydroquebec.com/data/documents-donnees/pdf/electricity-rates.pdf
-
-and from the "Regie de l'énergie" document http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-RepDDR-2018_10_26.pdf#page=124
-
-## Period
-
-A period is time window where a specific billing or algorythmic logic is applied by HQ
-
-### normal
-A period when nothing special is defined by HQ rate policies
-
-### peak (peak hours)
-
-In this module: All hours from 06:00 to 09:00 and from 16:00 to 20:00 during the winter.
-
-This is when the critical peak events from hydro are happening. 
-
-In hydro's document there are also exclusions for specific holiday dates (Christmans, New year, Good Friday and Easter Monday) that we don't take into account here (yet)
-
-### anchor (temperature adjustement)
-
-This period starts 5 hours before the next peak event's start time and has a duration of 3 hours. With the current peak period (as described above) it results in the following time periods: 
-
-**Morning**
-01h00-04h00
-
-**Evening**
-11h00-14h00
-
-This period is used by HQ in combination with the reference period to calculate the Reference Energy used to calculate the credit by trying to guess the additionnal energy usage caused by the colder temperature.
-
-In HQ's rate document it is called temperature adjustment and in the "Regie de l'énergie" docuement it is refered to as an "anchor" period.
-## event or critical (critical peak event)
-
-An event is also refered to a "critical peak event" means that HQ sent a notification that the peak period will be considered critical and admissible to winter credits
-
-A period is critical when HQ announced a critical peak event at that time. It can also be applied to the period preceding the critical peak (anchor period before the critical peak)
-## pre-heat
-
-A period of time when we want to run some automations before a critical peak event's start. Ex: raise the thermostat setpoint.
-
 
 ## TODO 
 - Describe the different values returned

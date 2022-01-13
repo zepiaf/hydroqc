@@ -30,6 +30,17 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
             In hydro’s document there are also exclusions for specific holiday dates (Christmas, New year, Good Friday
             and Easter Monday) that we don’t take into account here (yet)
 
+        * critical
+            When a period is critical it can means two things depending on the period:
+
+                **peak period** + **ongoing critical peak event**
+
+                The current peak period is part of a “critical peak event”
+
+                **normal period or anchor period** + **upcomming critical peak event**
+
+                Means that the next immediate peak period will be a “critical peak event”
+
 
         * anchor
             This period starts 5 hours before the next peak event’s start time and has a duration of 3 hours. With the
@@ -45,8 +56,7 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
             In HQ’s rate document it is called temperature adjustment and in the “Regie de l’énergie” document it is
             refered to as an “anchor” period.
 
-
-        * pre-heat | pre-critical-preak
+        * pre-heat
             A period of time when we want to run some automations before a critical peak event’s start.
 
             Ex: raise the thermostat setpoint.
@@ -56,14 +66,18 @@ http://publicsde.regie-energie.qc.ca/projets/469/DocPrj/R-4057-2018-B-0062-DDR-R
     notification that the peak period will be considered critical and
     admissible to winter credits.
 
-        * critical
-            When a period is critical it can means two things depending on the period:
+**reference period**
+    This value is not used or provided in winter_module.py but is good
+    to know about to give some context to the calculations.
 
-                **peak period** + **ongoing critical peak event**
+    The period corresponding to the last 5 non-critical event, differentiated by weekend vs week days.
 
-                The current peak period is part of a “critical peak event”
+    **Examples:**
 
-                **normal period or anchor period** + **upcomming critical peak event**
+    Saturday evening critical peak event’s reference period = Last 5
+    non-critical evening peaks that occurred on weekend days
 
-                Means that the next immediate peak period will be a “critical peak event”
+    Wednesday morning critical peak event’s reference period = Last 5
+    non-critical morning peaks that occurred on week days
+
 
