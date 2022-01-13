@@ -5,6 +5,7 @@ import datetime
 import time
 
 from dateutil import parser
+from yaml.events import MappingStartEvent
 from hydro_api.services import Services
 log = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class WinterCredit:
     def refreshData(self):
         """Refresh data if data is older than the config event_refresh_seconds parameter"""
         log.debug("Cheking if we need to update the Data")
-        if time.time() > (self.last_update + self.config.events.event_refresh_seconds):
+        if time.time() > (self.last_update + self.config.periods.event_refresh_seconds):
             log.debug("Refreshing data")
             self.data = self.api.getWinterCredit()
             events_data = self._getWinterCreditEvents()
@@ -74,7 +75,7 @@ class WinterCredit:
         return self.events['next']
 
     def getCurrentState(self):
-        """Calculate current state and reference periods"""
+        """Calculate current periods"""
         thisday = datetime.datetime.now()
         today = thisday.strftime("%Y-%m-%d")
         today_noon_ts = datetime.datetime.strptime(today+" 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp()
@@ -83,28 +84,57 @@ class WinterCredit:
         tomorrow = nextday.strftime("%Y-%m-%d")
         tomorrow_noon_ts = datetime.datetime.strptime(tomorrow+" 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp()
 
-        ref_start_offset = datetime.timedelta(hours=self.config.events.ref_start_offset)
-        ref_end_offset = datetime.timedelta(hours=self.config.events.ref_end_offset)
+        anchor_start_offset = datetime.timedelta(hours=self.config.periods.anchor_start_offset)
+        anchor_duration = datetime.timedelta(hours=self.config.periods.anchor_duration)
 
-        today_ref_morning_start = datetime.datetime.strptime(today+" "+self.config.events.morning_event_start, "%Y-%m-%d %H:%M:%S") - ref_start_offset
-        today_ref_morning_end = datetime.datetime.strptime(today+" "+self.config.events.morning_event_start, "%Y-%m-%d %H:%M:%S") - ref_end_offset
-        today_ref_evening_start = datetime.datetime.strptime(today+" "+self.config.events.evening_event_start, "%Y-%m-%d %H:%M:%S") - ref_start_offset
-        today_ref_evening_end = datetime.datetime.strptime(today+" "+self.config.events.evening_event_start, "%Y-%m-%d %H:%M:%S") - ref_end_offset
+        today_peak_morning_start = datetime.datetime.strptime(today+" "+self.config.periods.morning_peak_start, "%Y-%m-%d %H:%M:%S")
+        today_peak_morning_end = datetime.datetime.strptime(today+" "+self.config.periods.morning_peak_end, "%Y-%m-%d %H:%M:%S")
+        today_peak_evening_start = datetime.datetime.strptime(today+" "+self.config.periods.evening_peak_start, "%Y-%m-%d %H:%M:%S")
+        today_peak_evening_end = datetime.datetime.strptime(today+" "+self.config.periods.evening_peak_end, "%Y-%m-%d %H:%M:%S")
+        
+        today_anchor_morning_start = today_peak_morning_start - anchor_start_offset
+        today_anchor_morning_end = today_anchor_morning_start + anchor_duration
+        today_anchor_evening_start = today_peak_evening_start - anchor_start_offset
+        today_anchor_evening_end = today_anchor_evening_start + anchor_duration
 
-        if self.event_in_progress:
-            current_state = 'peak'
-        elif today_ref_morning_start.timestamp() <= thisday.timestamp() <= today_ref_morning_end.timestamp():
-            current_state = 'reference_period_morning'
-        elif today_ref_evening_start.timestamp() <= thisday.timestamp() <= today_ref_evening_end.timestamp():
-            current_state = 'reference_period_evening'
+        '''
+        Calculation for the next periods. Should probably be with getNextEvent but I am not sure of the best way to move it there
+        '''
+        if thisday.timestamp() <= today_peak_morning_end.timestamp():
+            next_peak_period_start = today_peak_morning_start
+            next_peak_period_end = today_peak_morning_end
+        elif today_peak_morning_end.timestamp() <= thisday.timestamp() <= today_peak_evening_start.timestamp():
+            next_peak_period_start = today_peak_evening_start
+            next_peak_period_end = today_peak_evening_end
+        elif thisday.timestamp() >= today_peak_evening_end.timestamp():
+            next_peak_period_start = today_peak_morning_start + datetime.timedelta(days=1)
+            next_peak_period_end = today_peak_morning_end + datetime.timedelta(days=1)
+        
+        next_anchor_period_start = next_peak_period_start - anchor_start_offset
+        next_anchor_period_end = next_anchor_period_start + anchor_duration
+
+        if today_peak_morning_start.timestamp() <= thisday.timestamp() <= today_peak_morning_end.timestamp():
+            current_period = 'peak'
+            current_period_time_of_day = 'peak_morning'
+        elif today_peak_evening_start.timestamp() <= thisday.timestamp() <= today_peak_evening_end.timestamp():
+            current_period = 'peak'
+            current_period_time_of_day = 'peak_evening'
+        elif today_anchor_morning_start.timestamp() <= thisday.timestamp() <= today_anchor_morning_end.timestamp():
+            current_period = 'anchor'
+            current_period_time_of_day = 'anchor_morning'
+        elif today_anchor_evening_start.timestamp() <= thisday.timestamp() <= today_anchor_evening_end.timestamp():
+            current_period = 'anchor'
+            current_period_time_of_day = 'anchor_evening'
         else:
-            current_state = 'normal'
+            current_period = 'normal'
+            current_period_time_of_day = 'normal'
 
         pre_heat = False
         morning_event_today = False
         evening_event_today = False
         morning_event_tomorrow = False
         evening_event_tomorrow = False
+        upcoming_event = False
 
         next_event = self.getNextEvent()
         if 'pre_heat_start_ts' in next_event:
@@ -122,31 +152,79 @@ class WinterCredit:
                         morning_event_tomorrow = True
                     else:
                         evening_event_tomorrow = True
+                if event['date'] == today:
+                    if event['end_ts'] > thisday.timestamp():
+                        next_peak_critical = True
+                    else:
+                        next_peak_critical = False
+                if event['start_ts'] > thisday.timestamp():
+                        upcoming_event = True
+
+        if next_peak_critical == True:
+            current_composite_state = current_period_time_of_day+"_critical"
+        elif next_peak_critical == False:
+            current_composite_state = current_period_time_of_day+"_normal"
 
         response = {
             'state': {
-                'current_state': current_state,
+                'current_period': current_period,
+                'current_period_time_of_day': current_period_time_of_day,
+                'current_composite_state': current_composite_state,
+                'critical': next_peak_critical,
                 'event_in_progress': self.event_in_progress,
                 'pre_heat': pre_heat,
+                'upcoming_event': upcoming_event,
                 'morning_event_today' : morning_event_today,
                 'evening_event_today' : evening_event_today,
                 'morning_event_tomorrow' : morning_event_tomorrow,
                 'evening_event_tomorrow' : evening_event_tomorrow,
             },
-            'reference_period': {
+           'next': {
+                'peak': {
+                    'start': next_peak_period_start.strftime(self.config.formats.datetime_format),
+                    'end' : next_peak_period_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': next_peak_period_start.timestamp(),
+                    'end_ts': next_peak_period_end.timestamp(),
+                    'critical': next_peak_critical
+                },
+                'anchor': {
+                    'start': next_anchor_period_start.strftime(self.config.formats.datetime_format),
+                    'end' : next_anchor_period_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': next_anchor_period_start.timestamp(),
+                    'end_ts': next_anchor_period_end.timestamp(),
+                    'critical': next_peak_critical
+                },
+           },
+            'anchor_periods': {
                 'morning': {
-                    'date': today_ref_morning_start.strftime('%Y-%m-%d'),
-                    'start': today_ref_morning_start.strftime(self.config.formats.datetime_format),
-                    'end': today_ref_morning_end.strftime(self.config.formats.datetime_format),
-                    'start_ts': today_ref_morning_start.timestamp(),
-                    'end_ts': today_ref_morning_end.timestamp(),
+                    'date': today_anchor_morning_start.strftime('%Y-%m-%d'),
+                    'start': today_anchor_morning_start.strftime(self.config.formats.datetime_format),
+                    'end': today_anchor_morning_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': today_anchor_morning_start.timestamp(),
+                    'end_ts': today_anchor_morning_end.timestamp(),
                 },
                 'evening': {
-                    'date': today_ref_evening_start.strftime('%Y-%m-%d'),
-                    'start': today_ref_evening_start.strftime(self.config.formats.datetime_format),
-                    'end': today_ref_evening_end.strftime(self.config.formats.datetime_format),
-                    'start_ts': today_ref_evening_start.timestamp(),
-                    'end_ts': today_ref_evening_end.timestamp(),
+                    'date': today_anchor_evening_start.strftime('%Y-%m-%d'),
+                    'start': today_anchor_evening_start.strftime(self.config.formats.datetime_format),
+                    'end': today_anchor_evening_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': today_anchor_evening_start.timestamp(),
+                    'end_ts': today_anchor_evening_end.timestamp(),
+                },
+            },
+            'peak_periods': {
+                'morning': {
+                    'date': today_peak_morning_start.strftime('%Y-%m-%d'),
+                    'start': today_peak_morning_start.strftime(self.config.formats.datetime_format),
+                    'end': today_peak_morning_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': today_peak_morning_start.timestamp(),
+                    'end_ts': today_peak_morning_end.timestamp(),
+                },
+                'evening': {
+                    'date': today_peak_evening_start.strftime('%Y-%m-%d'),
+                    'start': today_peak_evening_start.strftime(self.config.formats.datetime_format),
+                    'end': today_peak_evening_end.strftime(self.config.formats.datetime_format),
+                    'start_ts': today_peak_evening_start.timestamp(),
+                    'end_ts': today_peak_evening_end.timestamp(),
                 }
             }
         }
@@ -293,5 +371,5 @@ class WinterCredit:
                 next_event_timestamp = min(events['current_winter']['future'], key=float)
         if next_event_timestamp:
             next_event = events['current_winter']['future'][next_event_timestamp]
-    
+
         return {'next': next_event, 'event_in_progress': event_in_progress}

@@ -8,17 +8,22 @@ credentials:
 formats:
   datetime_format: '%Y-%m-%d %H:%M:%S'
 
-events:
-  # offset : event_start - offset
-  pre_heat_start_offset: 3
-  pre_heat_end_offset: 0
-  ref_start_offset: 5
-  ref_end_offset: 2
-  # based on observation, events are always starting at 6am and 4pm
-  # we need that to calculate ref periods
-  morning_event_start: "06:00:00"
-  evening_event_start: "16:00:00"
-  # data will be refreshed after 5mn (avoid killing hydro api)
+periods:
+  # Default peak periods as defined by HQ (as of winter 2021-2022)
+  morning_peak_start: "06:00:00"
+  morning_peak_end: "09:00:00"
+  evening_peak_start: "16:00:00"
+  evening_peak_end: "20:00:00"
+
+  # Offset in hours to apply to the peak period start time to find the start of the anchor period
+  # Per HQ documentation (as of winter 2021-2022) it is 5 hours before the next peak
+  anchor_start_offset: -5
+  
+  # Duration of the anchor period
+  # Per HQ documentation (as of winter 2021-2022) it is a duration of 3 hours
+  anchor_duration: 3 
+  
+  # Data will be refreshed after 5mn (avoid killing hydro api)
   event_refresh_seconds: 300
 
 mqtt:
@@ -27,4 +32,4 @@ mqtt:
   user: ''
   password: ''
   # mqtt topic will be {base_topic}/{contract_id}/(next|state|reference_period)/#
-  base_topic: 'hydroqc'
+  base_topic: 'HQ-test'

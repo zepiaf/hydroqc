@@ -95,13 +95,16 @@ This uses python 3 (tested with 3.8)
 ```
 {
  "state": {
-  "current_state": "normal",
-  "event_in_progress": false,
-  "pre_heat": true,
-  "morning_event_today": false,
-  "evening_event_today": true,
-  "morning_event_tomorrow": true,
-  "evening_event_tomorrow": true
+  "current_period": "normal", # peak | normal | anchor : what kind of period is happening now (at the moment this script run)
+  "current_period_time_of_day": # peak_morning | peak_evening | anchor_morning | anchor_evening | normal : like the above but combined with the time of day
+  "peak_critical": true # true | false : is the next peak period a critical peak
+  "upcoming_event": true # true | false : is there an critical peak event announced by HQ, not matter when it is happening.
+  "event_in_progress": false, # true | false : if there is currently a critical peak event in progress
+  "pre_heat": true, # true | false : if we are currently in a pre-heat period as defined in the config
+  "morning_event_today": false, # true | false : Is there a critical peak event in the morning today
+  "evening_event_today": true, # true | false : Is there a critical peak event in the evening today
+  "morning_event_tomorrow": true, # true | false : Is there a critical peak event in the morning tomorrow
+  "evening_event_tomorrow": true # true | false : Is there a critical peak event in the evening tomorrow
  },
  "reference_period": {
   "morning": {
@@ -176,36 +179,12 @@ This period starts 5 hours before the next peak event's start time and has a dur
 This period is used by HQ in combination with the reference period to calculate the Reference Energy used to calculate the credit by trying to guess the additionnal energy usage caused by the colder temperature.
 
 In HQ's rate document it is called temperature adjustment and in the "Regie de l'énergie" docuement it is refered to as an "anchor" period.
-
-### reference period
-
-This value is not used or provided in winter_module.py but is good to know about to give some context to the calculations.
-
-The period corresponding to the last 5 non-critical event, differenciated by weekend vs week days.
-
-Saturday evening critical peak  event's reference period = Last 5 non-critical evening peaks that occured on weekend days
-
-Wednesday morning critical peak event's reference period = Last 5 non-critical morning peaks that occurend on week days
-
-
-## event (critical peak event)
+## event or critical (critical peak event)
 
 An event is also refered to a "critical peak event" means that HQ sent a notification that the peak period will be considered critical and admissible to winter credits
 
-### critical
-
-When a period is critical it can means two things depending on the period type:
-
-#### peak period
-The current peak period is part of a "critical peak event"
-
-#### normal period or anchor period
-Means that the next immediate peak period will be a "critical peak event"
-
-### none (or normal/regular?)
-The period is not or will not be critical.
-
-## pre-heat (pre-peak or pre-critical-preak?)
+A period is critical when HQ announced a critical peak event at that time. It can also be applied to the period preceding the critical peak (anchor period before the critical peak)
+## pre-heat
 
 A period of time when we want to run some automations before a critical peak event's start. Ex: raise the thermostat setpoint.
 
