@@ -322,9 +322,9 @@ class WinterCredit:
 
         :rtype: dict
         """
-        pre_heat_start_offset = datetime.timedelta(hours=self.config.events.pre_heat_start_offset)
+        pre_heat_start_offset = datetime.timedelta(hours=self.config.periods.pre_heat_start_offset)
         pre_heat_start = start - pre_heat_start_offset
-        pre_heat_end_offset = datetime.timedelta(hours=self.config.events.pre_heat_end_offset)
+        pre_heat_end_offset = datetime.timedelta(hours=self.config.periods.pre_heat_end_offset)
         pre_heat_end = start - pre_heat_end_offset
         pre_heat = {
             'pre_heat_start': pre_heat_start.strftime(self.config.formats.datetime_format),
@@ -354,11 +354,13 @@ class WinterCredit:
                     , self.config.formats.datetime_format)
                 event_end_datetime = datetime.datetime.strptime(events['current_winter']['future'][timestamp]['end']
                     , self.config.formats.datetime_format)
-                pre_heat = self._getPreHeat(event_start_datetime)
-                events['current_winter']['future'][timestamp]['pre_heat_start'] = pre_heat['pre_heat_start']
-                events['current_winter']['future'][timestamp]['pre_heat_end'] = pre_heat['pre_heat_end']
-                events['current_winter']['future'][timestamp]['pre_heat_start_ts'] = pre_heat['pre_heat_start_ts']
-                events['current_winter']['future'][timestamp]['pre_heat_end_ts'] = pre_heat['pre_heat_end_ts']
+                
+                if self.config.periods.pre_heat_start_offset > 0:
+                    pre_heat = self._getPreHeat(event_start_datetime)
+                    events['current_winter']['future'][timestamp]['pre_heat_start'] = pre_heat['pre_heat_start']
+                    events['current_winter']['future'][timestamp]['pre_heat_end'] = pre_heat['pre_heat_end']
+                    events['current_winter']['future'][timestamp]['pre_heat_start_ts'] = pre_heat['pre_heat_start_ts']
+                    events['current_winter']['future'][timestamp]['pre_heat_end_ts'] = pre_heat['pre_heat_end_ts']
     
                 if event_start_datetime.timestamp() <= ref_date.timestamp() <= event_end_datetime.timestamp():
                     event_in_progress = True
