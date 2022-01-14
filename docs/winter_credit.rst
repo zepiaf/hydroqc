@@ -9,3 +9,13 @@ Winter Credit
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: winter_credit.period
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: winter_credit.event
+    :members:
+    :undoc-members:
+    :show-inheritance:
