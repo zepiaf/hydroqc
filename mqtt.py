@@ -31,7 +31,7 @@ if user and password:
     mqtt_client.username_pw_set(username=user, password=password)
 mqtt_client.connect(broker,port)
 mqtt_client.loop_start()
-next_event = w.getNextEvent()
+next_event = w.getNextEvent().to_dict()
 
 if next_event:
     for key in next_event.keys():

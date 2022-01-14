@@ -28,7 +28,7 @@ def LowLevelExample():
 
 def HighLevelExample():
    w = WinterCredit()
-   print (json.dumps(w.getNextEvent(), indent=True))
+   print (json.dumps(w.getNextEvent().to_dict()))
    print (json.dumps(w.getCurrentState(), indent=True))
    print (json.dumps(w.getFutureEvents(), indent=True))
 if __name__ == "__main__":
