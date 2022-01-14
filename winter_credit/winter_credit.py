@@ -103,7 +103,7 @@ class WinterCredit:
         if thisday.timestamp() <= today_peak_morning_end.timestamp():
             next_peak_period_start = today_peak_morning_start
             next_peak_period_end = today_peak_morning_end
-        elif today_peak_morning_end.timestamp() <= thisday.timestamp() <= today_peak_evening_start.timestamp():
+        elif today_peak_morning_end.timestamp() <= thisday.timestamp() <= today_peak_evening_end.timestamp():
             next_peak_period_start = today_peak_evening_start
             next_peak_period_end = today_peak_evening_end
         elif thisday.timestamp() >= today_peak_evening_end.timestamp():
