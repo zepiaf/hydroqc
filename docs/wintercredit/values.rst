@@ -4,8 +4,6 @@ Values
 .. toctree::
    :maxdepth: 4
 
-TODO: Describe the meaning of the values returned by the module.
-
 * General
 
 Value name containing the _ts suffix are unix timestamp. Other timestamp will follow the format set in the configuration.
