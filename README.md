@@ -3,6 +3,8 @@ Hydro Quebec API wrapper.
 
 This is a package to access some functionalities of Hydro Quebec API that are not documented.
 
+We started a discord server for the project where you can come to discuss or find help with the project : https://discord.gg/uHYnEHA2
+
 ## Documentation
 
 ### Code documentation
