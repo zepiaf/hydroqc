@@ -10,6 +10,7 @@ import datetime
 import time
 from config.config import Config
 from winter_credit.winter_credit import WinterCredit
+from winter_credit.event import Event
 
 config = Config()
 broker = config.mqtt.server
@@ -31,7 +32,12 @@ if user and password:
     mqtt_client.username_pw_set(username=user, password=password)
 mqtt_client.connect(broker,port)
 mqtt_client.loop_start()
-next_event = w.getNextEvent().to_dict()
+next_event_object = w.getNextEvent()
+if not isinstance(next_event_object,Event):
+    next_event = dict()
+else:
+    next_event = next_event_object.to_dict()
+
 
 if next_event:
     for key in next_event.keys():

@@ -31,7 +31,8 @@ class WinterCredit:
         """Refresh data if data is older than the config event_refresh_seconds parameter"""
         # DATES
         self.ref_date = datetime.datetime.now()
-
+        # To test the date can be modified artificially here.
+        # self.ref_date = self._dateTimeFromString("2022-01-18 00:00:00")
         self.today = datetime.datetime.now()
         self.today_date = self.today.strftime("%Y-%m-%d")
         self.today_noon_ts = self._timestampFromString(self.today_date + " 12:00:00")
@@ -268,7 +269,7 @@ class WinterCredit:
         next_peak_critical = False
         next_event = self.getNextEvent()
 
-        if next_event.pre_heat_start_ts:
+        if isinstance(next_event,Event) and next_event.pre_heat_start_ts:
             if next_event.pre_heat_start_ts <= self.today.timestamp() <= next_event.pre_heat_end_ts:
                 pre_heat = True
         for event in self.getAllEvents():
