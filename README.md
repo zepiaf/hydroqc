@@ -1,4 +1,12 @@
-# HydroQC
+# WE MOVED ...
+
+This project on github is now discontinued : find us on GITLab !
+
+This project will be converted to a library you can use to implement Hydro Quebec data the way you want.
+
+[Follow us on GITLab ( https://gitlab.com/hydroqc/hydroqc )](https://gitlab.com/hydroqc/hydroqc)
+
+## HydroQC
 Hydro Quebec API wrapper.
 
 This is a package to access some functionalities of Hydro Quebec API that are not documented.
